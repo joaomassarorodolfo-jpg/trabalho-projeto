@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Seguros e Pagamentos</title>
+    <title>Seguros OS - Painel de Controle</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>Dashboard de Seguros & Pagamentos</h1>
+        <header>
+            <h1>Seguros<span>OS</span></h1>
+            <div class="acoes-sistema">
+                <button onclick="abrirModal()" class="btn-principal">+ Novo Seguro</button>
+                <button onclick="exportarDados()" class="btn-secundario">💾 Exportar JSON</button>
+                <label for="importar-arquivo" class="btn-secundario">📂 Importar JSON</label>
+                <input type="file" id="importar-arquivo" accept=".json" onchange="importarDados(event)" style="display: none;">
+            </div>
+        </header>
         
-        <!-- Cards de Resumo -->
+        <!-- Dashboard de Métricas -->
         <div class="dashboard">
             <div class="card aprovado">
                 <h3>Aprovados</h3>
@@ -27,29 +35,73 @@
             </div>
         </div>
 
-        <!-- Filtros -->
-        <div class="filtros">
-            <button onclick="filtrarTabela('todos')">Todos</button>
-            <button onclick="filtrarTabela('aprovado')">Aprovados</button>
-            <button onclick="filtrarTabela('pendente')">Pendentes</button>
-            <button onclick="filtrarTabela('nao_pago')">Não Pagos</button>
+        <!-- Barra de Filtros e Busca -->
+        <div class="barra-ferramentas">
+            <input type="text" id="busca-cliente" placeholder="Buscar cliente ou seguro..." oninput="filtrarDados()">
+            <div class="filtros">
+                <button onclick="mudarFiltroStatus('todos')" class="btn-filtro ativo" id="filtro-todos">Todos</button>
+                <button onclick="mudarFiltroStatus('aprovado')" class="btn-filtro">Aprovados</button>
+                <button onclick="mudarFiltroStatus('pendente')" class="btn-filtro">Pendentes</button>
+                <button onclick="mudarFiltroStatus('nao_pago')" class="btn-filtro">Não Pagos</button>
+            </div>
         </div>
 
-        <!-- Tabela de Dados -->
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Cliente</th>
-                    <th>Seguro</th>
-                    <th>Valor</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-corpo">
-                <!-- Dados inseridos via JavaScript -->
-            </tbody>
-        </table>
+        <!-- Tabela Gerenciável -->
+        <div class="tabela-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Seguro</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-corpo">
+                    <!-- Gerado dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro / Edição -->
+    <div id="modal-seguro" class="modal">
+        <div class="modal-conteudo">
+            <h2 id="modal-titulo">Novo Seguro</h2>
+            <form id="form-seguro" onsubmit="salvarSeguro(event)">
+                <input type="hidden" id="seguro-id">
+                
+                <div class="campo">
+                    <label for="form-cliente">Nome do Cliente</label>
+                    <input type="text" id="form-cliente" required autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="form-seguro-nome">Especificação do Seguro</label>
+                    <input type="text" id="form-seguro-nome" required autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="form-valor">Valor (R$)</label>
+                    <input type="number" id="form-valor" step="0.01" required>
+                </div>
+
+                <div class="campo">
+                    <label for="form-status">Status do Pagamento</label>
+                    <select id="form-status" required>
+                        <option value="aprovado">Aprovado</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="nao_pago">Não Pago</option>
+                    </select>
+                </div>
+
+                <div class="modal-acoes">
+                    <button type="button" onclick="fecharModal()" class="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Salvar Dados</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="script.js"></script>
